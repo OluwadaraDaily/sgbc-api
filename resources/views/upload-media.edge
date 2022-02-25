@@ -1,0 +1,35 @@
+@layout('layout.main')
+
+@section('body')
+	<div class="column is-full">
+		<div class="container column is-10">
+			<form method="POST" action="{{ route('upload') }}" enctype="multipart/form-data" class="box">
+				{{ csrfField() }}
+				<h3 class="title">Upload Media</h3>
+				<div class="column is-full">
+					<label for="">Sermon Title</label> <br>
+					<input type="text" class="input" name="title" id="">
+				</div>
+				<div class="column is-full">
+					<label for="">Preacher</label> <br>
+					<select name="pastor" class="input">
+						@each(pastor in pastors)
+							<option value="{{pastor.id}}">{{pastor.first_name}} {{pastor.last_name}}</option>
+						@endeach
+					</select>
+				</div>
+				<div class="column is-full">
+					<label for="">Audio File</label> <br>
+					<input type="file" name="audio_file" accept="audio/*">
+				</div>
+				<div class="column is-full">
+					<label for="">Date Preached</label> <br>
+					<input type="date" name="date_preached">
+				</div>
+				<div>
+					<input type="submit" value="Submit">
+				</div>
+			</form>
+		</div>
+	</div>
+@endsection
