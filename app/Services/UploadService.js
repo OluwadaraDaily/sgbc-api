@@ -4,10 +4,11 @@ const fs = require("fs");
 const MediaAudio = use('App/Models/MediaAudio')
 const Sermon = use('App/Models/Sermon')
 const monthsArray = use('App/Services/util/monthsArray');
+const PastorService = use('App/Services/PastorService');
 
 class UploadService {
 	async uploadMedia(data, audioFile) {
-		
+		// const pastorRecord = await PastorService.getPastor(data.pastor)
 		// Format Date
 		const dateArray = data.date_preached.split('-')
 		const datePreached = new Date(Number(dateArray[0]), (Number(dateArray[1]) - 1), Number(dateArray[2]))
@@ -17,7 +18,7 @@ class UploadService {
 		// Folder name would be like: April-2019 **Something like this...
 		const slug = data.title.replace(/\s+/g, '-')
 		const file = fs.readFileSync(audioFile.tmpPath);
-		const fileName = `${monthsArray[datePreached.getMonth()]}-${dateArray[0]}/${slug}.${audioFile.extname}`
+		const fileName = `${monthsArray[datePreached.getMonth()]}-${dateArray[0]}/${slug}-${data.date_preached}.${audioFile.extname}`
 		console.log("FILENAME: ", fileName)
 		await Drive.disk('s3').put(fileName, file);
 		const audioUrl = await Drive.disk('s3').getSignedUrl(fileName, 86400)
