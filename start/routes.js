@@ -16,4 +16,10 @@
 /** @type {typeof import('@adonisjs/framework/src/Route/Manager')} */
 const Route = use('Route')
 
-Route.on('/').render('welcome')
+// Route.on('/').render('welcome')
+Route.get('/', () => {
+	return { message: "Welcome to the SGBC API v1" }
+})
+Route.get('/upload', 'UploadController.index')
+Route.post('/upload', 'UploadController.store').as('upload')
+
