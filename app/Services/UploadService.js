@@ -19,12 +19,8 @@ class UploadService {
 		const slug = data.title.replace(/\s+/g, '-')
 		const file = fs.readFileSync(audioFile.tmpPath);
 		const fileName = `${monthsArray[datePreached.getMonth()]}-${dateArray[0]}/${slug}-${data.date_preached}.${audioFile.extname}`
-		console.log("FILENAME: ", fileName)
 		await Drive.disk('s3').put(fileName, file);
 		const audioUrl = await Drive.disk('s3').getSignedUrl(fileName, 86400)
-
-		// Log stuff for debugging
-		console.log("URL: ", audioUrl)
 
 		// Create MediaAudio record
 		const audioRecord = await MediaAudio.create({
@@ -40,8 +36,7 @@ class UploadService {
 			audio_id: audioRecord.id,
 			slug: slug
 		})
-
-		console.log("RESPONSE: ", sermonRecord)
+		
 		return sermonRecord
 	}
 }
