@@ -2,15 +2,12 @@
 const PastorService = use('App/Services/PastorService');
 const UploadService = use('App/Services/UploadService');
 const BaseController = use('App/Controllers/Http/BaseController');
-const Drive = use('Drive');
-const fs = require("fs");
 
 class UploadController extends BaseController {
 	constructor() {
     super();
     this.pastorService = new PastorService();
     this.uploadService = new UploadService();
-		this.drive = Drive;
   }
   async index({ view }) {
 		const pastors = await this.pastorService.fetchPastors()

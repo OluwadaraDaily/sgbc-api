@@ -20,6 +20,10 @@ const Route = use('Route')
 Route.get('/', () => {
 	return { message: "Welcome to the SGBC API v1" }
 })
+// Upload Controller
 Route.get('/upload', 'UploadController.index')
 Route.post('/upload', 'UploadController.store').as('upload')
+
+// Media Contrller
+Route.get('/media/audios', 'MediaController.getAllAudioFiles')
 
