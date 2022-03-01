@@ -31,7 +31,8 @@
     "aws-sdk": "^2.1081.0",
     "bulma": "^0.9.3",
     "pg": "^8.7.3",
-    "randomstring": "^1.2.2"
+    "randomstring": "^1.2.2",
+    "url-parse": "^1.5.10"
   },
   "autoload": {
     "App": "./app"
