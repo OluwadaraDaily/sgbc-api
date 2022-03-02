@@ -14,8 +14,6 @@ class UploadService {
 		const datePreached = new Date(Number(dateArray[0]), (Number(dateArray[1]) - 1), Number(dateArray[2]))
 		
 		// Slugify the name of the sermon and save it in a file based on month and year
-		// TO-DO: Use Moment or Date FNS to use the date sent from the front end to get the name of the month and the year
-		// Folder name would be like: April-2019 **Something like this...
 		const slug = data.title.replace(/\s+/g, '-')
 		const file = fs.readFileSync(audioFile.tmpPath);
 		const fileName = `${monthsArray[datePreached.getMonth()]}-${dateArray[0]}/${slug}-${data.date_preached}.${audioFile.extname}`
@@ -25,7 +23,9 @@ class UploadService {
 		// Create MediaAudio record
 		const audioRecord = await MediaAudio.create({
 			audio_url: audioUrl,
-			pastor_id: data.pastor
+			pastor_id: data.pastor,
+			file_name: fileName,
+			last_updated: new Date()
 		})
 
 		// Create Sermon record
