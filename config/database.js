@@ -9,6 +9,8 @@ const Helpers = use('Helpers')
 const Url = require('url-parse')
 const DATABASE_URL = new Url(Env.get('DATABASE_URL'))
 
+const devMode = Env.get("DEV_MODE") ? true : false
+
 module.exports = {
   /*
   |--------------------------------------------------------------------------
@@ -79,7 +81,7 @@ module.exports = {
       user: Env.get('DB_USER', DATABASE_URL.username),
       password: Env.get('DB_PASSWORD', DATABASE_URL.password),
       database: Env.get('DB_DATABASE', DATABASE_URL.pathname.substr(1)),
-      ssl: { rejectUnauthorized: false }
+      ssl: devMode ? false : { rejectUnauthorized: false }
     }
   }
 }
