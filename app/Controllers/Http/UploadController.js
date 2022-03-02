@@ -25,7 +25,7 @@ class UploadController extends BaseController {
 			const sermonResponse = await this.uploadService.uploadMedia(data, audioFile)
       return this.success(response, sermonResponse, "Successfully uploaded media", 200)
 		} catch (error) {
-      return this.error(response, 'There was a problem, please try again later.', [], 500);
+      return this.error(response, 'There was a problem, please try again later.', error, 500);
 		}
 	}
 }
