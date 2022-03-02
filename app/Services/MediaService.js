@@ -20,7 +20,7 @@ class UploadService {
 				await this.mediaAudio.query().where({ id: audioFile.id }).update({ audio_url: signedUrl, last_updated: new Date() });
 			}
 		}
-		let allAudioFiles = await this.mediaAudio.query().where({ is_deleted: false }).fetch()
+		allAudioFiles = await this.mediaAudio.query().where({ is_deleted: false }).fetch()
 		return allAudioFiles.toJSON()
 	}
 }
