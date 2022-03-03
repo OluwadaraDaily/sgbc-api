@@ -7,6 +7,9 @@ class Sermon extends BaseModel {
 	sermonAudio() {
 		return this.hasOne('App/Models/MediaAudio', 'audio_id', 'id')
 	}
+	sermonPastor() {
+		return this.hasOne('App/Models/Pastor', 'pastor_id', 'id')
+	}
 }
 
 module.exports = Sermon

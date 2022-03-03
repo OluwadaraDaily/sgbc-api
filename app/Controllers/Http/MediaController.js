@@ -13,6 +13,7 @@ class MediaController extends BaseController {
 			const allAudioFiles = await this.mediaService.getAllAudioSermons()
       return this.success(response, allAudioFiles, "Successfully retrieved all audio files", 200)
 		} catch (error) {
+			console.log("Error: ", error)
       return this.error(response, 'There was a problem, please try again later.', [], 500);
 		}
 

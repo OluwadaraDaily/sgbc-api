@@ -13,15 +13,16 @@ class UploadService {
 }
 	async getAllAudioSermons() {
 		let allAudioSermons = await this.sermon.query().whereNotNull('audio_id').with('sermonAudio').fetch()
-		let allAudioFiles = allAudioSermons.toJSON().sermonAudio
+		let allAudioFiles = allAudioSermons.toJSON()
+
 		for(const audioFile of allAudioFiles) {
-			const secondsDifference = differenceInSeconds(new Date(), new Date(audioFile.last_updated));
+			const secondsDifference = differenceInSeconds(new Date(), new Date(audioFile.sermonAudio.last_updated));
 			if (secondsDifference >= 86400) {
-				const signedUrl = await this.drive.disk("s3").getSignedUrl(audioFile.file_name, 86400);
-				await this.mediaAudio.query().where({ id: audioFile.id }).update({ audio_url: signedUrl, last_updated: new Date() });
+				const signedUrl = await this.drive.disk("s3").getSignedUrl(audioFile.sermonAudio.file_name, 86400);
+				await this.mediaAudio.query().where({ id: audioFile.sermonAudio.id }).update({ audio_url: signedUrl, last_updated: new Date() });
 			}
 		}
-		allAudioSermons = await this.sermon.query().whereNotNull('audio_id').with('sermonAudio').fetch()
+		allAudioSermons = await this.sermon.query().whereNotNull('audio_id').with('sermonAudio').with('sermonPastor').fetch()
 		return allAudioSermons.toJSON()
 	}
 }
