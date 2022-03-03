@@ -4,6 +4,9 @@
 const BaseModel = use('App/Models/Base');
 
 class Sermon extends BaseModel {
+	sermonAudio() {
+		return this.hasOne('App/Models/MediaAudio', 'audio_id', 'id')
+	}
 }
 
 module.exports = Sermon

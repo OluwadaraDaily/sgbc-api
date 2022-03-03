@@ -9,10 +9,11 @@ class UploadService {
 	constructor() {
 		this.drive = Drive;
 		this.mediaAudio = MediaAudio;
+		this.sermon = Sermon;
 }
 	async getAllAudioFiles() {
-		let allAudioFiles = await this.mediaAudio.query().where({ is_deleted: false }).fetch()
-		allAudioFiles = allAudioFiles.toJSON()
+		let allAudioSermons = await this.sermon.query().whereNotNull('audio_id').with('sermonAudio').fetch()
+		let allAudioFiles = allAudioSermons.toJSON().sermonAudio
 		for(const audioFile of allAudioFiles) {
 			const secondsDifference = differenceInSeconds(new Date(), new Date(audioFile.last_updated));
 			if (secondsDifference >= 86400) {
@@ -20,8 +21,8 @@ class UploadService {
 				await this.mediaAudio.query().where({ id: audioFile.id }).update({ audio_url: signedUrl, last_updated: new Date() });
 			}
 		}
-		allAudioFiles = await this.mediaAudio.query().where({ is_deleted: false }).fetch()
-		return allAudioFiles.toJSON()
+		allAudioSermons = await this.sermon.query().whereNotNull('audio_id').with('sermonAudio').fetch()
+		return allAudioSermons.toJSON()
 	}
 }
 
