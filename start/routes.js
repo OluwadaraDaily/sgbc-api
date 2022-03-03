@@ -25,5 +25,5 @@ Route.get('/upload', 'UploadController.index')
 Route.post('/upload', 'UploadController.store').as('upload')
 
 // Media Controller
-Route.get('/media/audios', 'MediaController.getAllAudioFiles')
+Route.get('/media/audios', 'MediaController.getAllAudioSermons')
 

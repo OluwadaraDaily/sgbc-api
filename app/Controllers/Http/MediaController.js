@@ -8,9 +8,9 @@ class MediaController extends BaseController {
     super();
 		this.mediaService = new MediaService()
   }
-	async getAllAudioFiles({ request, response }) {
+	async getAllAudioSermons({ request, response }) {
 		try {
-			const allAudioFiles = await this.mediaService.getAllAudioFiles()
+			const allAudioFiles = await this.mediaService.getAllAudioSermons()
       return this.success(response, allAudioFiles, "Successfully retrieved all audio files", 200)
 		} catch (error) {
       return this.error(response, 'There was a problem, please try again later.', [], 500);

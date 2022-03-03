@@ -11,7 +11,7 @@ class UploadService {
 		this.mediaAudio = MediaAudio;
 		this.sermon = Sermon;
 }
-	async getAllAudioFiles() {
+	async getAllAudioSermons() {
 		let allAudioSermons = await this.sermon.query().whereNotNull('audio_id').with('sermonAudio').fetch()
 		let allAudioFiles = allAudioSermons.toJSON().sermonAudio
 		for(const audioFile of allAudioFiles) {
