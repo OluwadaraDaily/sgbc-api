@@ -44,8 +44,8 @@ class PastorController extends BaseController {
    * @param {Response} ctx.response
    * @param {View} ctx.view
    */
-  async create ({ request, response, view }) {
-
+  async create ({ view }) {
+    return view.render('create-pastor')
   }
 
   /**
@@ -57,6 +57,13 @@ class PastorController extends BaseController {
    * @param {Response} ctx.response
    */
   async store ({ request, response }) {
+    const pastorData = request.post()
+    try {
+      const pastorResponse = await this.pastorService.createPastor(pastorData)
+      return this.success(response, pastorResponse, "Successfully created pastor", 201)
+    } catch (error) {
+      return this.error(response, 'There was a problem, please try again later.', error, 500);
+    }
   }
 
   /**

@@ -27,3 +27,7 @@ Route.post('/upload', 'UploadController.store').as('upload')
 // Media Controller
 Route.get('/media/audios', 'MediaController.getAllAudioSermons')
 
+// Pastor Controller
+Route.get('/pastors/create', 'PastorController.create')
+Route.post('/pastors', 'PastorController.store').as('storePastor')
+

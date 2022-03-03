@@ -1,0 +1,23 @@
+@layout('layout.main')
+
+@section('body')
+	<div class="column is-full">
+		<div class="container column is-10">
+			<form method="POST" action="{{ route('storePastor') }}" class="box">
+				{{ csrfField() }}
+				<h3 class="title">Create Pastor</h3>
+				<div class="column is-full">
+					<label for="">First Name</label> <br>
+					<input type="text" class="input" name="first_name" id="" required>
+				</div>
+				<div class="column is-full">
+					<label for="">Last Name</label> <br>
+					<input type="text" class="input" name="last_name" id="" required>
+				</div>
+				<div>
+					<input type="submit" value="Submit">
+				</div>
+			</form>
+		</div>
+	</div>
+@endsection
