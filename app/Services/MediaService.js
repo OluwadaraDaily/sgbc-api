@@ -2,17 +2,20 @@
 const Drive = use('Drive');
 const fs = require("fs");
 const MediaAudio = use('App/Models/MediaAudio')
+const MediaImage = use('App/Models/MediaImage')
 const Sermon = use('App/Models/Sermon')
 const { differenceInSeconds } = require("date-fns");
+const Utils = use('App/Services/util/Utils')
 
 class UploadService {
 	constructor() {
 		this.drive = Drive;
 		this.mediaAudio = MediaAudio;
 		this.sermon = Sermon;
+		this.mediaImage = MediaImage;
 }
 	async getAllAudioSermons() {
-		let allAudioSermons = await this.sermon.query().whereNotNull('audio_id').with('sermonAudio').fetch()
+		let allAudioSermons = await this.sermon.query().whereNotNull('audio_id').with('sermonAudio').with('sermonImage').fetch()
 		let allAudioFiles = allAudioSermons.toJSON()
 
 		for(const audioFile of allAudioFiles) {
@@ -20,10 +23,92 @@ class UploadService {
 			if (secondsDifference >= 86400) {
 				const signedUrl = await this.drive.disk("s3").getSignedUrl(audioFile.sermonAudio.file_name, 86400);
 				await this.mediaAudio.query().where({ id: audioFile.sermonAudio.id }).update({ audio_url: signedUrl, last_updated: new Date() });
+				if(audioFile.sermonImage) { 
+					const imgSignedUrl = await this.drive.disk('s3').getSignedUrl(audioFile.sermonImage.file_name, 86400) 
+					await this.mediaImage.query().where({ id: audioFile.sermonImage.id }).update({ image_url: imgSignedUrl, last_updated: new Date() });
+				}
 			}
 		}
-		allAudioSermons = await this.sermon.query().whereNotNull('audio_id').with('sermonAudio').with('sermonPastor').fetch()
+		allAudioSermons = await this.sermon.query()
+			.whereNotNull('audio_id')
+			.with('sermonAudio')
+			.with('sermonPastor')
+			.with('sermonImage')
+			.fetch()
 		return allAudioSermons.toJSON()
+	}
+
+	async getAllSermons() {
+		const sermons = await this.sermon.all()
+		return sermons.toJSON()
+	}
+
+	async getSermonById(id) {
+		return this.sermon.query().where({ id: id }).first()
+	}
+
+	async getImageById(id) {
+		return this.mediaImage.query().where({ id: id }).first()
+	}
+
+	async getAudioById(id) {
+		return this.mediaAudio.query().where({ id: id }).first()
+	}
+
+	async patchSermon(data, file) {
+		const sermonRecord = await this.getSermonById(data.sermon)
+		const format = "type/date/slug"
+		switch(data.updateOption) {
+			case 'image':
+				// Update imageRecord
+				const updateSermonImageResponse = await this.updateSermonFile(sermonRecord, format, file, 'Images')
+				updateSermonImageResponse.modelRecord.file_name = updateSermonImageResponse.fileName
+				updateSermonImageResponse.modelRecord.image_url = updateSermonImageResponse.url
+				await updateSermonImageResponse.modelRecord.save()
+				return updateSermonImageResponse.modelRecord
+			case 'audio':
+				// Update audioRecord
+				const updateSermonAudioResponse = await this.updateSermonFile(sermonRecord, format, file, 'Audio')
+				updateSermonAudioResponse.modelRecord.file_name = updateSermonAudioResponse.fileName
+				updateSermonAudioResponse.modelRecord.audio_url = updateSermonAudioResponse.url
+				await updateSermonAudioResponse.modelRecord.save()
+				return updateSermonAudioResponse.modelRecord
+		}
+	}
+
+	async updateSermonFile(sermonRecord, format, file, type) {
+		let formatData
+		let modelRecord
+		// Get Previous Model Record for that sermonRecord, if exists
+		switch(type) {
+			case 'Images':
+				modelRecord = await this.mediaImage.query().where({ id: sermonRecord.image_id }).first()
+				break;
+			case 'Audio':
+				modelRecord = await this.mediaAudio.query().where({ id: sermonRecord.audio_id }).first()
+				break;
+		}
+		if(modelRecord.file_name) {
+			let nameArray = modelRecord.file_name.split("/")
+			console.log('Name Array', nameArray)
+			const indexOfDot = nameArray[nameArray.length - 1].indexOf(".")
+			nameArray[nameArray.length - 1] = nameArray[nameArray.length - 1].substring(0, indexOfDot)
+			formatData = {
+				type: nameArray[0],
+				date: nameArray[1],
+				slug: nameArray[2]
+			}
+		}
+		else {
+			// If model record is not set, create a new record based on the format
+			formatData = {
+				type: type,
+				date: new Date().toISOString().substring(0, 10),
+				slug: Utils.generateSlug(sermonRecord.title)
+			}
+		}
+		const { url, fileName } = await Utils.uploadFile(file, format, formatData)
+		return {url, fileName, modelRecord}
 	}
 }
 

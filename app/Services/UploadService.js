@@ -2,40 +2,49 @@
 const Drive = use('Drive');
 const fs = require("fs");
 const MediaAudio = use('App/Models/MediaAudio')
+const MediaImage = use('App/Models/MediaImage')
 const Sermon = use('App/Models/Sermon')
 const monthsArray = use('App/Services/util/monthsArray');
+const Utils = use('App/Services/util/Utils')
 const PastorService = use('App/Services/PastorService');
 
 class UploadService {
-	async uploadMedia(data, audioFile) {
-		// const pastorRecord = await PastorService.getPastor(data.pastor)
-		// Format Date
-		const dateArray = data.date_preached.split('-')
-		const datePreached = new Date(Number(dateArray[0]), (Number(dateArray[1]) - 1), Number(dateArray[2]))
-		
-		// Slugify the name of the sermon and save it in a file based on month and year
-		const slug = data.title.replace(/\s+/g, '-')
-		const file = fs.readFileSync(audioFile.tmpPath);
-		const fileName = `${monthsArray[datePreached.getMonth()]}-${dateArray[0]}/${slug}-${data.date_preached}.${audioFile.extname}`
-		await Drive.disk('s3').put(fileName, file);
-		const audioUrl = await Drive.disk('s3').getSignedUrl(fileName, 86400)
+	async uploadMedia(data, audioFile, imageFile) {
+		console.log("DATA: ", data)
+		const UploadAudioData = await Utils.uploadSermonFile(data, audioFile, 'Audio')
+
+		const UploadImageData = await Utils.uploadSermonFile(data, imageFile, 'Images')
 
 		// Create MediaAudio record
 		const audioRecord = await MediaAudio.create({
-			audio_url: audioUrl,
+			audio_url: UploadAudioData.url,
 			pastor_id: data.pastor,
-			file_name: fileName,
+			file_name: UploadAudioData.fileName,
+			last_updated: new Date()
+		})
+
+		// Create MediaImage record
+		let imageRecord = await MediaImage.create({
+			image_url: UploadImageData.url,
+			file_name: UploadImageData.fileName,
 			last_updated: new Date()
 		})
 
 		// Create Sermon record
 		const sermonRecord = await Sermon.create({
 			title: data.title,
-			date_preached: datePreached,
+			date_preached: UploadAudioData.datePreached,
 			pastor_id: data.pastor,
 			audio_id: audioRecord.id,
-			slug: slug
+			slug: UploadAudioData.slug,
+			image_id: imageRecord.id
 		})
+
+		// Update Image Record
+		imageRecord.sermon_id = sermonRecord.id
+		await imageRecord.save()
+
+		console.log('Image: ', imageRecord.image_url)
 		
 		return sermonRecord
 	}

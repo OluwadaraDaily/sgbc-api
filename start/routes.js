@@ -23,6 +23,8 @@ Route.get('/', () => {
 // Upload Controller
 Route.get('/upload', 'UploadController.index')
 Route.post('/upload', 'UploadController.store').as('upload')
+Route.get('/sermon/update', 'UploadController.updateSermonView')
+Route.post('/sermon/update', 'UploadController.patchSermon').as('patchSermon')
 
 // Media Controller
 Route.get('/media/audios', 'MediaController.getAllAudioSermons')
@@ -30,4 +32,3 @@ Route.get('/media/audios', 'MediaController.getAllAudioSermons')
 // Pastor Controller
 Route.get('/pastors/create', 'PastorController.create')
 Route.post('/pastors', 'PastorController.store').as('storePastor')
-
