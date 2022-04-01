@@ -79,6 +79,7 @@ class UploadService {
 	async updateSermonFile(sermonRecord, format, file, type) {
 		let formatData
 		let modelRecord
+		let uploadResponse
 		// Get Previous Model Record for that sermonRecord, if exists
 		switch(type) {
 			case 'Images':
@@ -88,9 +89,9 @@ class UploadService {
 				modelRecord = await this.mediaAudio.query().where({ id: sermonRecord.audio_id }).first()
 				break;
 		}
-		if(modelRecord.file_name) {
+		// If modelRecord exists, update it
+		if(modelRecord !== null) {
 			let nameArray = modelRecord.file_name.split("/")
-			console.log('Name Array', nameArray)
 			const indexOfDot = nameArray[nameArray.length - 1].indexOf(".")
 			nameArray[nameArray.length - 1] = nameArray[nameArray.length - 1].substring(0, indexOfDot)
 			formatData = {
@@ -98,17 +99,40 @@ class UploadService {
 				date: nameArray[1],
 				slug: nameArray[2]
 			}
+			uploadResponse = await Utils.uploadFile(file, format, formatData)
+
+			modelRecord.file_name = uploadResponse.fileName
+			modelRecord.image_url = uploadResponse.url
+			modelRecord.last_updated = new Date()
+			await modelRecord.save()
 		}
+		// If modelRecord does not exist, create it and then update it
 		else {
 			// If model record is not set, create a new record based on the format
 			formatData = {
 				type: type,
-				date: new Date().toISOString().substring(0, 10),
+				date: sermonRecord.date_preached.toISOString().substring(0, 10),
 				slug: Utils.generateSlug(sermonRecord.title)
 			}
+			
+			uploadResponse = await Utils.uploadFile(file, format, formatData)
+
+			// Create new model record
+			modelRecord = await this.mediaImage.create({
+				file_name: uploadResponse.fileName,
+				image_url: uploadResponse.url,
+				last_updated: new Date(),
+				sermon_id: sermonRecord.id
+			})
+			// Update sermonRecord with new modelRecord
+			sermonRecord.image_id = modelRecord.id
+			await sermonRecord.save()
 		}
-		const { url, fileName } = await Utils.uploadFile(file, format, formatData)
-		return {url, fileName, modelRecord}
+		
+		return {
+			...uploadResponse,
+			modelRecord: modelRecord
+		}
 	}
 }
 

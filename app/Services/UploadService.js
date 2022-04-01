@@ -10,9 +10,7 @@ const PastorService = use('App/Services/PastorService');
 
 class UploadService {
 	async uploadMedia(data, audioFile, imageFile) {
-		console.log("DATA: ", data)
 		const UploadAudioData = await Utils.uploadSermonFile(data, audioFile, 'Audio')
-
 		const UploadImageData = await Utils.uploadSermonFile(data, imageFile, 'Images')
 
 		// Create MediaAudio record
@@ -43,8 +41,6 @@ class UploadService {
 		// Update Image Record
 		imageRecord.sermon_id = sermonRecord.id
 		await imageRecord.save()
-
-		console.log('Image: ', imageRecord.image_url)
 		
 		return sermonRecord
 	}

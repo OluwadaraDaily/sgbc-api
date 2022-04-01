@@ -28,7 +28,6 @@ class UploadController extends BaseController {
 			const sermonResponse = await this.uploadService.uploadMedia(data, audioFile, imageFile)
       return this.success(response, sermonResponse, "Successfully uploaded media", 200)
 		} catch (error) {
-			console.log("ERROR: ", error)
       return this.error(response, 'There was a problem, please try again later.', error, 500);
 		}
 	}
@@ -52,12 +51,10 @@ class UploadController extends BaseController {
 			const data = request.post()
 			
 			const patchSermonResponse = await this.mediaService.patchSermon(data, file)
-			console.log("Response: ", patchSermonResponse)
 
 			return this.success(response, patchSermonResponse, "Successfully updated sermon", 200)
 			
 		} catch (error) {
-			console.log("Error: ", error)
       return this.error(response, 'There was a problem, please try again later.', error, 500);
 		}
 	}
