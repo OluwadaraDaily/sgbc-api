@@ -10,6 +10,15 @@ const PastorService = use('App/Services/PastorService');
 
 class UploadService {
 	async uploadMedia(data, audioFile, imageFile) {
+		// Check if the sermon exists
+		const slug = Utils.slugify(data.title);
+		const sermonExists = await this.sermon.query().where({ slug: slug }).first()
+		if (sermonExists) {
+			return {
+				status: "error",
+				message: "Sermon already exists"
+			}
+		}
 		const UploadAudioData = await Utils.uploadSermonFile(data, audioFile, 'Audio')
 		const UploadImageData = await Utils.uploadSermonFile(data, imageFile, 'Images')
 
@@ -42,7 +51,10 @@ class UploadService {
 		imageRecord.sermon_id = sermonRecord.id
 		await imageRecord.save()
 		
-		return sermonRecord
+		return {
+			status: "success",
+			data: sermonRecord
+		}
 	}
 }
 
