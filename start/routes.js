@@ -34,4 +34,4 @@ Route.get('/pastors/create', 'PastorController.create')
 Route.post('/pastors', 'PastorController.store').as('storePastor')
 
 // LBC Controller
-Route.post('/lbc/2022', 'LagosBibleConference2022Controller.store')
+Route.post('/lbc/2022', 'LagosBibleConference2022Controller.store').validator(['LBCForm'])
