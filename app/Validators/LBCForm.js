@@ -17,7 +17,8 @@ class LBCForm {
       'email.email': 'You must provide a valid email address.',
       'email.unique': 'Email is already registered',
       'full_name.required': 'You must provide your full name.',
-      'phone_number.required': 'Phone number is already registered.',
+      'phone_number.required': 'You must provide a phone number.',
+      'phone_number.unique': 'Phone number is already registered.',
       'location_from.required': 'You must provide a location from where you will be coming'
     }
   }
