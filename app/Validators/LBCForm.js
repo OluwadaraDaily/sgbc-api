@@ -6,7 +6,7 @@ class LBCForm {
       // validation rules
       email: "required|email|unique:lagos_bible_conference_2022_s",
       full_name: "required",
-      phone_number: "required|unique",
+      phone_number: "required|unique:lagos_bible_conference_2022_s",
       location_from: "required"
     }
   }
