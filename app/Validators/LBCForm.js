@@ -4,7 +4,7 @@ class LBCForm {
   get rules () {
     return {
       // validation rules
-      email: "required|email|unique",
+      email: "required|email|unique:lagos_bible_conference_2022_s",
       full_name: "required",
       phone_number: "required|unique",
       location_from: "required"
