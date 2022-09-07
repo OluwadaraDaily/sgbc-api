@@ -3,17 +3,19 @@ const Drive = use('Drive');
 const fs = require("fs");
 const MediaAudio = use('App/Models/MediaAudio')
 const MediaImage = use('App/Models/MediaImage')
+const MediaVideo = use('App/Models/MediaVideo')
 const Sermon = use('App/Models/Sermon')
 const { differenceInSeconds } = require("date-fns");
 const Utils = use('App/Services/util/Utils')
 
-class UploadService {
+class MediaService {
 	constructor() {
 		this.drive = Drive;
 		this.mediaAudio = MediaAudio;
 		this.sermon = Sermon;
 		this.mediaImage = MediaImage;
-}
+		this.mediaVideo = MediaVideo;
+	}
 	async getAllAudioSermons() {
 		let allAudioSermons = await this.sermon.query().whereNotNull('audio_id').with('sermonAudio').with('sermonImage').fetch()
 		let allAudioFiles = allAudioSermons.toJSON()
@@ -39,12 +41,13 @@ class UploadService {
 	}
 
 	async getAllSermons() {
-		const sermons = await this.sermon.all()
+		await this.getAllAudioSermons()
+		const sermons = await this.sermon.query().with('sermonAudio').with('sermonPastor').with('sermonImage').with('sermonVideo').fetch()
 		return sermons.toJSON()
 	}
 
 	async getSermonById(id) {
-		return this.sermon.query().where({ id: id }).first()
+		return this.sermon.query().where({ id: id }).with('sermonAudio').with('sermonPastor').with('sermonImage').with('sermonVideo').first()
 	}
 
 	async getImageById(id) {
@@ -66,6 +69,7 @@ class UploadService {
 				updateSermonImageResponse.modelRecord.image_url = updateSermonImageResponse.url
 				await updateSermonImageResponse.modelRecord.save()
 				return updateSermonImageResponse.modelRecord
+			
 			case 'audio':
 				// Update audioRecord
 				const updateSermonAudioResponse = await this.updateSermonFile(sermonRecord, format, file, 'Audio')
@@ -73,6 +77,16 @@ class UploadService {
 				updateSermonAudioResponse.modelRecord.audio_url = updateSermonAudioResponse.url
 				await updateSermonAudioResponse.modelRecord.save()
 				return updateSermonAudioResponse.modelRecord
+			
+			case 'video':
+				// Update videoRecord
+				const videoRecord = await this.mediaVideo.create({
+					video_url: data.video_url,
+					pastor_id: sermonRecord.pastor_id
+				})
+				sermonRecord.video_id = videoRecord.id
+				await sermonRecord.save()
+				return sermonRecord
 		}
 	}
 
@@ -136,4 +150,4 @@ class UploadService {
 	}
 }
 
-module.exports = UploadService
+module.exports = MediaService

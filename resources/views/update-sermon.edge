@@ -7,18 +7,41 @@
 				{{ csrfField() }}
 				<h3 class="title">Update Sermon</h3>
 				<div class="column is-full">
-					<label for="">Sermons</label> <br>
-					<select name="sermon" class="input" required>
-						@each(sermon in sermons)
-							<option value="{{sermon.id}}">{{sermon.title}}</option>
-						@endeach
+					<label for="">Sermon Title</label> <br>
+					<select name="sermon" class="input" required readonly>
+						<option value="{{sermon.id}}" selected>{{sermon.title}}</option>
 					</select>
 				</div>
 				<div class="column is-full">
+					<label for="">Date Preached</label> <br>
+					<input type="text" name="" class="input" value="{{sermon.date_preached}}" id="">
+				</div>
+				<div class="column is-full">
+					@if(sermon.sermonAudio.audio_url)
+						<a href="{{sermon.sermonAudio.audio_url}}">SERMON AUDIO LINK</a>
+					@else
+						<p>No Audio Yet</p>
+					@endif
+				</div>
+				<div class="column is-full">
+					@if(sermon.sermonImage.image_url)
+						<a href="{{sermon.sermonImage.image_url}}">SERMON IMAGE LINK</a>
+					@else
+						<p>No Image Yet</p>
+					@endif
+				</div>
+				<div class="column is-full">
+					@if(sermon.sermonVideo.video_url)
+						<a href="{{sermon.sermonVideo.video_url}}">SERMON VIDEO LINK</a>
+					@else
+						<p>No Video Yet</p>
+					@endif
+				</div>
+				<div class="column is-full">
 					<label for="">What to update</label> <br>
-					<select name="updateOption" id="">
+					<select name="updateOption" class="input" id="">
 						<option value="audio">Audio</option>
-						<option value="audio">Video</option>
+						<option value="video">Video</option>
 						<option value="image">Image</option>
 					</select>
 				</div>
@@ -27,7 +50,11 @@
 					<input type="file" name="file" accept="*">
 				</div>
 				<div>
-					<input type="submit" value="Submit">
+					<label for="">Video URL</label> <br>
+					<input type="text" name="video_url" class="input" id="">
+				</div> <br>
+				<div>
+					<input type="submit" class="button" value="Submit">
 				</div>
 			</form>
 		</div>

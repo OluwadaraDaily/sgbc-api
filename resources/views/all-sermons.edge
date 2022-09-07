@@ -1,0 +1,36 @@
+@layout('layout.main')
+
+@section('body')
+	<div class="column is-full">
+		<div class="container column is-10">
+			@each(sermon in sermons)
+        <div class="box">
+          <p class="title">{{ sermon.title }}</p>
+
+          <p>Sermon Audio - 
+            @if(sermon.sermonAudio.audio_url)
+              <a href={{sermon.sermonAudio.audio_url}}>LINK</a>
+            @else
+              <span>No Audio</span>
+            @endif
+          </p>
+          <p>Sermon Image - 
+            @if(sermon.sermonImage.image_url)
+              <a href={{sermon.sermonImage.image_url}}>LINK</a>
+            @else
+              <span>No Image</span>
+            @endif
+          </p>
+          <p>Sermon Video - 
+            @if(sermon.sermonVideo.video_url)
+              <a href={{sermon.sermonVideo.video_url}}>LINK</a>
+            @else
+              <span>No Video</span>
+            @endif
+          </p>
+          <a href="/sermons/{{sermon.id}}/update">EDIT SERMON</a>
+        </div>
+      @endeach
+		</div>
+	</div>
+@endsection

@@ -23,10 +23,13 @@ Route.get('/', () => {
 // Upload Controller
 Route.get('/upload', 'UploadController.index')
 Route.post('/upload', 'UploadController.store').as('upload')
-Route.get('/sermon/update', 'UploadController.updateSermonView')
-Route.post('/sermon/update', 'UploadController.patchSermon').as('patchSermon')
+// Route.get('/sermons/update', 'UploadController.updateSermonView')
+Route.get('/sermons/:id/update', 'UploadController.updateSermonView')
+Route.post('/sermons/update', 'UploadController.patchSermon').as('patchSermon')
 
 // Media Controller
+Route.get('/sermons', 'MediaController.listOfAllSermons')
+Route.get('/sermons/all', 'MediaController.getAllSermons')
 Route.get('/media/audios', 'MediaController.getAllAudioSermons')
 
 // Pastor Controller

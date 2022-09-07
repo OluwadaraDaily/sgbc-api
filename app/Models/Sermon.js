@@ -13,6 +13,9 @@ class Sermon extends BaseModel {
 	sermonImage() {
 		return this.hasOne('App/Models/MediaImage', 'image_id', 'id')
 	}
+	sermonVideo() {
+		return this.hasOne('App/Models/MediaVideo', 'video_id', 'id')
+	}
 }
 
 module.exports = Sermon

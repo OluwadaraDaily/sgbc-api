@@ -35,12 +35,13 @@ class UploadController extends BaseController {
 		}
 	}
 
-	async updateSermonView({ view }) {
+	async updateSermonView({ params, view }) {
 		try {
-			const sermons = await this.mediaService.getAllSermons()
+			const sermonId = params.id
+			const sermon = await this.mediaService.getSermonById(sermonId)
 			return view.render('update-sermon.edge', {
 				title: "Update Sermon",
-				sermons: sermons
+				sermon: sermon.toJSON()
 			})	
 		} catch (error) {
       return this.error(response, 'There was a problem, please try again later.', error, 500);
@@ -49,7 +50,6 @@ class UploadController extends BaseController {
 
 	async patchSermon({ request, response }) {
 		try {
-
 			const file = request.file('file')
 			const data = request.post()
 			
