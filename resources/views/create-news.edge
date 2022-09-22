@@ -1,0 +1,27 @@
+@layout('layout.main')
+
+@section('body')
+	<div class="column is-full">
+		<div class="container column is-10">
+			<form method="POST" action="{{ route('storeNews') }}" enctype="multipart/form-data" class="box">
+				{{ csrfField() }}
+				<h3 class="title">Create News</h3>
+				<div class="column is-full">
+					<label for="">Title</label> <br>
+					<input type="text" class="input" name="title" id="" required>
+				</div>
+				<div class="column is-full">
+					<label for="">Body</label> <br>
+          <textarea name="body" class="textarea" id="" cols="30" rows="10"></textarea>
+				</div>
+        <div class="column is-full">
+					<label for="">News Image</label> <br>
+					<input type="file" name="news_image" accept="image/*" required>
+				</div>
+				<div>
+					<input type="submit" value="Submit">
+				</div>
+			</form>
+		</div>
+	</div>
+@endsection

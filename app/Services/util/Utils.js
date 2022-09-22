@@ -41,7 +41,7 @@ const Utils = {
   },
 
   generateSlug(title) {
-    return title.replace(/\s+/g, '-')
+    return title.toLowerCase().replace(/\s+/g, '-')
   }
 }
 

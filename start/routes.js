@@ -38,3 +38,8 @@ Route.post('/pastors', 'PastorController.store').as('storePastor')
 
 // LBC Controller
 Route.post('/lbc/2022', 'LagosBibleConference2022Controller.store').validator(['LBCForm'])
+
+// News Controller
+Route.get('/news/create', 'NewsController.create')
+Route.get('/news', 'NewsController.index')
+Route.post('/news', 'NewsController.store').as('storeNews')
