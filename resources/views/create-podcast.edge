@@ -1,0 +1,35 @@
+@layout('layout.main')
+
+@section('body')
+	<div class="column is-full">
+		<div class="container column is-10">
+			<form method="POST" action="{{ route('storePodcast') }}" enctype="multipart/form-data" class="box">
+				{{ csrfField() }}
+				<h3 class="title">Create Podcast Record</h3>
+				<div class="column is-full">
+					<label for="">Title</label> <br>
+					<input type="text" class="input" name="title" id="" required>
+				</div>
+        <div class="column is-full">
+					<label for="">Episode Number</label> <br>
+					<input type="number" class="input" name="episode_number" id="" required>
+				</div>
+        <div class="column is-full">
+					<label for="">Date Recorded</label> <br>
+					<input type="date" class="input" name="date_recorded" id="" required>
+				</div>
+        <div class="column is-full">
+					<label for="">Podcast Image</label> <br>
+					<input type="file" name="podcast_image" accept="image/*" required>
+				</div>
+        <div class="column is-full">
+					<label for="">Podcast Audio</label> <br>
+					<input type="file" name="podcast_audio" accept="audio/*" required>
+				</div>
+				<div>
+					<input type="submit" value="Submit">
+				</div>
+			</form>
+		</div>
+	</div>
+@endsection

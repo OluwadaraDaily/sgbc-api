@@ -4,7 +4,6 @@ const fs = require("fs");
 const News = use('App/Models/News')
 const NewsImage = use('App/Models/NewsImage')
 const { differenceInSeconds } = require("date-fns");
-const { title } = require("process");
 const Utils = use('App/Services/util/Utils')
 const monthsArray = use('App/Services/util/monthsArray');
 
@@ -16,8 +15,8 @@ class NewsService {
 	}
 
   async fetchAllNews() {
-    const { rows: allNews } = this.news.query().where({ is_deleted: false }).fetch()
-
+    await Utils.updateAllMedia(this.newsImage, 'image_url')
+    const { rows: allNews } = await this.news.query().with('newsImage').fetch()
     return {
       status: 'success',
       message: "Successfully fetched all news",

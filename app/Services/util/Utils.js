@@ -1,6 +1,7 @@
 const Drive = use('Drive');
 const fs = require("fs");
 const monthsArray = use('App/Services/util/monthsArray');
+const { differenceInSeconds } = require("date-fns");
 
 const Utils = {
   async uploadSermonFile(data, incFile, type) {
@@ -42,6 +43,33 @@ const Utils = {
 
   generateSlug(title) {
     return title.toLowerCase().replace(/\s+/g, '-')
+  },
+
+  async updateAllMedia(model, urlName) {
+    const { rows: allMedia } = await model.query().fetch()
+    for(const file of allMedia) {
+			const secondsDifference = differenceInSeconds(new Date(), new Date(file.last_updated));
+			if (secondsDifference >= 86400) {
+				const signedUrl = await Drive.disk("s3").getSignedUrl(file.file_name, 86400);
+        switch(urlName) {
+          case 'image_url':
+            await model.query().where({ id: file.id }).update({ image_url: signedUrl, last_updated: new Date() });
+            break;
+          
+          case 'audio_url':
+            await model.query().where({ id: file.id }).update({ audio_url: signedUrl, last_updated: new Date() });
+            break;
+          
+          case 'file_url':
+            await model.query().where({ id: file.id }).update({ file_url: signedUrl, last_updated: new Date() });
+            break;
+
+          case 'video_url':
+            await model.query().where({ id: file.id }).update({ video_url: signedUrl, last_updated: new Date() });
+            break;
+        }
+			}
+		}
   }
 }
 
