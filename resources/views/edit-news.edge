@@ -1,0 +1,37 @@
+@layout('layout.main')
+
+@section('body')
+	<div class="column is-full">
+		<div class="container column is-10">
+			<form method="POST" action="{{ route('patchNews') }}" enctype="multipart/form-data" class="box">
+				{{ csrfField() }}
+				<h3 class="title">Update News</h3>
+        <div class="column is-full">
+					<label for="">ID</label> <br>
+					<input type="text" value="{{ news.id }}" class="input" name="id" id="" required readonly>
+				</div>
+				<div class="column is-full">
+					<label for="">Title</label> <br>
+					<input type="text" value="{{ news.title }}" class="input" name="title" id="" required>
+				</div>
+				<div class="column is-full">
+					<label for="">Body</label> <br>
+          <textarea name="body" class="textarea" id="" cols="30" rows="10">{{news.body}}</textarea>
+				</div>
+        <div class="column is-full">
+          @if(newsImage.image_url)
+            <a href={{newsImage.image_url}}>LINK</a>
+          @else
+            <span>No Image</span>
+          @endif
+          <br>
+					<label for="">News Image</label> <br>
+					<input type="file" name="news_image" accept="image/*" required>
+				</div>
+				<div>
+					<input type="submit" value="Submit">
+				</div>
+			</form>
+		</div>
+	</div>
+@endsection

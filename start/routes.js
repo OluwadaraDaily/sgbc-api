@@ -43,6 +43,9 @@ Route.post('/lbc/2022', 'LagosBibleConference2022Controller.store').validator(['
 Route.get('/news/create', 'NewsController.create')
 Route.get('/news', 'NewsController.fetchAllNews')
 Route.post('/news', 'NewsController.store').as('storeNews')
+Route.get('/news/all', 'NewsController.index')
+Route.get('/news/:id/edit', 'NewsController.edit')
+Route.post('/news/update', 'NewsController.update').as('patchNews')
 
 // Podcast Controller
 Route.get('/podcasts', 'PodcastController.fetchAllPodcasts')

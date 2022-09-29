@@ -1,0 +1,22 @@
+@layout('layout.main')
+
+@section('body')
+	<div class="column is-full">
+		<div class="container column is-10">
+			@each(newsItem in news)
+        <div class="box">
+          <p class="title">{{ newsItem.title }}</p>
+
+          <p>Sermon Image - 
+            @if(newsItem.newsImage.image_url)
+              <a href={{newsItem.newsImage.image_url}}>LINK</a>
+            @else
+              <span>No Image</span>
+            @endif
+          </p>
+          <a href="/news/{{newsItem.id}}/edit">EDIT NEWS</a>
+        </div>
+      @endeach
+		</div>
+	</div>
+@endsection

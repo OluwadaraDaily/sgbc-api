@@ -25,6 +25,10 @@ class NewsController extends BaseController {
    * @param {View} ctx.view
    */
   async index ({ request, response, view }) {
+    const { data } = await this.newsService.fetchAllNews()
+    return view.render('list-news', {
+      news: data
+    })
   }
 
   /**
@@ -95,6 +99,11 @@ class NewsController extends BaseController {
    * @param {View} ctx.view
    */
   async edit ({ params, request, response, view }) {
+    const newsItem = await this.newsService.getNews(params.id)
+    return view.render('edit-news', {
+      news: newsItem,
+      newsImage: newsItem.toJSON().newsImage
+    })
   }
 
   /**
@@ -106,6 +115,17 @@ class NewsController extends BaseController {
    * @param {Response} ctx.response
    */
   async update ({ params, request, response }) {
+    const reqData = request.post()
+    const file = request.file('news_image')
+    try {
+      const { status, data, message, statusCode } = await this.newsService.updateNews(reqData.id, reqData, file)
+      if(status === 'error') {
+        return this.error(response, message, [], statusCode);
+      }
+      return this.success(response, data, message, statusCode)
+    } catch (error) {
+      return this.error(response, 'There was a problem, please try again later.', [], 500);
+    }
   }
 
   /**
