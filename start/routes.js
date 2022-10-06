@@ -51,3 +51,8 @@ Route.post('/news/update', 'NewsController.update').as('patchNews')
 Route.get('/podcasts', 'PodcastController.fetchAllPodcasts')
 Route.get('/podcasts/create', 'PodcastController.create')
 Route.post('/podcasts', 'PodcastController.store').as('storePodcast')
+
+// Hymn Controller
+Route.get('/hymns', 'HymnController.fetchHymns')
+Route.get('/hymns/create', 'HymnController.create')
+Route.post('/hymns', 'HymnController.store').as('storeHymn')

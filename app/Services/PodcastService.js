@@ -36,7 +36,7 @@ class PodcastService {
     }
     const audioFormatData = {
       type: "Audio",
-      date: `${monthsArray[new Date(data.date_recorded).getMonth()]}-${new Date().getFullYear()}`,
+      date: `${monthsArray[new Date(data.date_recorded).getMonth()]}-${new Date(data.date_recorded).getFullYear()}`,
       slug: Utils.generateSlug(data.title)
     }
     const { url: imageUrl, fileName: imageFileName } = await Utils.uploadFile(image, format, imageFormatData)

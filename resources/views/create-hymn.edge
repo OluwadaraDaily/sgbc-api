@@ -1,0 +1,51 @@
+@layout('layout.main')
+
+@section('body')
+	<div class="column is-full">
+		<div class="container column is-10">
+			<form method="POST" action="{{ route('storeHymn') }}" enctype="multipart/form-data" class="box">
+				{{ csrfField() }}
+				<h3 class="title">Create News</h3>
+				<div class="column is-full">
+					<label for="">Title</label> <br>
+					<input type="text" class="input" name="title" id="" required>
+				</div>
+				<div class="column is-full">
+					<label for="">Chorus</label> <br>
+          <textarea name="chorus" class="textarea" id="" cols="2" rows="2"></textarea>
+				</div>
+        <div class="column is-full">
+					<label for="">Verse 1</label> <br>
+          <textarea name="verse_1" class="textarea" id="" cols="2" rows="2"></textarea>
+				</div>
+        <div class="column is-full">
+					<label for="">Verse 2</label> <br>
+          <textarea name="verse_2" class="textarea" id="" cols="2" rows="2"></textarea>
+				</div>
+        <div class="column is-full">
+					<label for="">Verse 3</label> <br>
+          <textarea name="verse_3" class="textarea" id="" cols="2" rows="2"></textarea>
+				</div>
+        <div class="column is-full">
+					<label for="">Verse 4</label> <br>
+          <textarea name="verse_4" class="textarea" id="" cols="2" rows="2"></textarea>
+				</div>
+        <div class="column is-full">
+					<label for="">Verse 5</label> <br>
+          <textarea name="verse_5" class="textarea" id="" cols="2" rows="2"></textarea>
+				</div>
+        <div class="column is-full">
+					<label for="">Verse 6</label> <br>
+          <textarea name="verse_6" class="textarea" id="" cols="2" rows="2"></textarea>
+				</div>
+        <div class="column is-full">
+					<label for="">Hymn Audio</label> <br>
+					<input type="file" name="hymn_audio" accept="audio/*">
+				</div>
+				<div>
+					<input type="submit" value="Submit">
+				</div>
+			</form>
+		</div>
+	</div>
+@endsection
