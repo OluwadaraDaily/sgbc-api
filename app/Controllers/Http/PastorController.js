@@ -27,8 +27,8 @@ class PastorController extends BaseController {
    */
   async index ({ request, response, view }) {
     try {
-      const pastors = await this.pastorService.fetchPastors()
-      return this.success(response, pastors, "Successfully fetched pastors", 200)
+      const { status, data, message, statusCode } = await this.pastorService.fetchPastors()
+      return this.success(response, data, message, statusCode)
       
     } catch (error) {
       return this.error(response, 'There was a problem, please try again later.', 500);

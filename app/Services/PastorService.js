@@ -4,8 +4,13 @@ const Pastor = use('App/Models/Pastor')
 
 class PastorService {
 	async fetchPastors() {
-		const pastors = await Pastor.all()
-    return pastors.toJSON()
+		const { data: pastors } = await Pastor.query().fetch()
+    return {
+			status: 'success',
+			statusCode: 200,
+			message: 'Successfully fetched pastors',
+			data: pastors
+		}
 	}
 	async getPastor(id) {
 		const pastor = await Pastor.query().where({ id: id }).first()

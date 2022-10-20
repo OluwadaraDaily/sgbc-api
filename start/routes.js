@@ -37,6 +37,7 @@ Route.patch("sermons/:id", 'SermonController.updateSermon')
 
 // Pastor Controller
 Route.get('/pastors/create', 'PastorController.create')
+Route.get('/pastors', 'PastorController.index')
 Route.post('/pastors', 'PastorController.store').as('storePastor')
 
 // LBC Controller

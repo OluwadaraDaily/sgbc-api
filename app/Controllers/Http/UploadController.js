@@ -12,7 +12,7 @@ class UploadController extends BaseController {
     this.sermonService = new SermonService();
   }
   async index({ view }) {
-		const pastors = await this.pastorService.fetchPastors()
+		const { data: pastors } = await this.pastorService.fetchPastors()
 		return view.render('upload-media.edge', {
 			title: "Upload Page",
 			pastors: pastors
