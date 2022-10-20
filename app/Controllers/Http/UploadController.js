@@ -1,6 +1,6 @@
 'use strict'
 const PastorService = use('App/Services/PastorService');
-const MediaService = use('App/Services/MediaService');
+const SermonService = use('App/Services/SermonService');
 const UploadService = use('App/Services/UploadService');
 const BaseController = use('App/Controllers/Http/BaseController');
 
@@ -9,7 +9,7 @@ class UploadController extends BaseController {
     super();
     this.pastorService = new PastorService();
     this.uploadService = new UploadService();
-    this.mediaService = new MediaService();
+    this.sermonService = new SermonService();
   }
   async index({ view }) {
 		const pastors = await this.pastorService.fetchPastors()
@@ -35,13 +35,15 @@ class UploadController extends BaseController {
 		}
 	}
 
-	async updateSermonView({ params, view }) {
+	async updateSermonView({ params, view, response }) {
 		try {
 			const sermonId = params.id
-			const sermon = await this.mediaService.getSermonById(sermonId)
+			const sermon = await this.sermonService.getSermonById(sermonId)
+			const { data: booksOfTheBible } = await this.sermonService.getAllBooksOfTheBible()
 			return view.render('update-sermon.edge', {
 				title: "Update Sermon",
-				sermon: sermon.toJSON()
+				sermon: sermon.toJSON(),
+				books: booksOfTheBible
 			})	
 		} catch (error) {
       return this.error(response, 'There was a problem, please try again later.', error, 500);
@@ -53,7 +55,7 @@ class UploadController extends BaseController {
 			const file = request.file('file')
 			const data = request.post()
 			
-			const patchSermonResponse = await this.mediaService.patchSermon(data, file)
+			const patchSermonResponse = await this.sermonService.patchSermon(data, file)
 
 			return this.success(response, patchSermonResponse, "Successfully updated sermon", 200)
 			

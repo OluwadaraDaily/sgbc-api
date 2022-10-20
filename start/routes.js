@@ -27,10 +27,13 @@ Route.post('/upload', 'UploadController.store').as('upload')
 Route.get('/sermons/:id/update', 'UploadController.updateSermonView')
 Route.post('/sermons/update', 'UploadController.patchSermon').as('patchSermon')
 
-// Media Controller
-Route.get('/sermons', 'MediaController.listOfAllSermons')
-Route.get('/sermons/all', 'MediaController.getAllSermons')
-Route.get('/media/audios', 'MediaController.getAllAudioSermons')
+// SermonController
+Route.get('/sermons', 'SermonController.listOfAllSermons')
+Route.get('/sermons/all', 'SermonController.getAllSermons')
+Route.get('/media/audios', 'SermonController.getAllAudioSermons')
+Route.get('/bible/books', 'SermonController.getAllBooksOfTheBible')
+Route.patch("sermons/:id", 'SermonController.updateSermon')
+
 
 // Pastor Controller
 Route.get('/pastors/create', 'PastorController.create')

@@ -8,13 +8,14 @@ const Sermon = use('App/Models/Sermon')
 const monthsArray = use('App/Services/util/monthsArray');
 const Utils = use('App/Services/util/Utils')
 const PastorService = use('App/Services/PastorService');
+const { defaultImages } = use('App/Services/util/constants')
 
 class UploadService {
 	async uploadMedia(data, audioFile, imageFile) {
 		let UploadAudioData, audioRecord, imageRecord, videoRecord
 		// Check if the sermon exists
-		const slug = Utils.slugify(data.title);
-		const sermonExists = await this.sermon.query().where({ slug: slug }).first()
+		const slug = Utils.generateSlug(data.title);
+		const sermonExists = await Sermon.query().where({ slug: slug }).first()
 		if (sermonExists) {
 			return {
 				status: "error",
@@ -53,13 +54,13 @@ class UploadService {
 		
 		// Create Sermon record
 		const sermonRecord = await Sermon.create({
-			title: data.title || null,
-			date_preached: UploadAudioData.datePreached || null,
-			pastor_id: data.pastor || null,
-			audio_id: audioRecord.id || null,
-			slug: UploadAudioData.slug || null,
-			image_id: imageRecord.id || null,
-			video_id: videoRecord.id || null
+			title: data?.title || null,
+			date_preached: UploadAudioData?.datePreached || null,
+			pastor_id: data?.pastor || null,
+			audio_id: audioRecord?.id || null,
+			slug: UploadAudioData?.slug || null,
+			image_id: imageRecord?.id || defaultImages[1],
+			video_id: videoRecord?.id || null
 		})
 
 		if(imageFile) {

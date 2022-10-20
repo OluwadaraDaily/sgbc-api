@@ -7,8 +7,9 @@ const MediaVideo = use('App/Models/MediaVideo')
 const Sermon = use('App/Models/Sermon')
 const { differenceInSeconds } = require("date-fns");
 const Utils = use('App/Services/util/Utils')
+const BooksOfTheBible = use("App/Models/BooksOfTheBible.js")
 
-class MediaService {
+class SermonService {
 	constructor() {
 		this.drive = Drive;
 		this.mediaAudio = MediaAudio;
@@ -40,10 +41,28 @@ class MediaService {
 		return allAudioSermons.toJSON()
 	}
 
-	async getAllSermons() {
+	async getAllSermons({ filter_by_speaker, filter_by_series, filter_by_book }) {
 		await this.getAllAudioSermons()
-		const sermons = await this.sermon.query().with('sermonAudio').with('sermonPastor').with('sermonImage').with('sermonVideo').fetch()
-		return sermons.toJSON()
+		await Utils.updateAllMedia(this.mediaImage, 'image_url')
+		await Utils.updateAllMedia(this.mediaAudio, 'audio_url')
+		const query = Sermon.query()
+		if(filter_by_speaker) {
+			query.where({ pastor_id: filter_by_speaker })
+		}
+		if(filter_by_series) {
+			query.where({ sermon_series_id: filter_by_series })
+		}
+		if(filter_by_book) {
+			query.where({ book_of_the_bible_id : filter_by_book })
+		}
+
+    const { rows: sermons } = await query.with('sermonAudio').with('sermonPastor').with('sermonImage').with('sermonVideo').fetch()
+    return {
+      status: 'success',
+      statusCode: 200,
+      message: 'Sermons fetched successfully',
+      data: sermons
+    }
 	}
 
 	async getSermonById(id) {
@@ -58,35 +77,54 @@ class MediaService {
 		return this.mediaAudio.query().where({ id: id }).first()
 	}
 
+	async getAllBooksOfTheBible() {
+		const { rows: booksOfTheBible } = await BooksOfTheBible.query().fetch()
+		return {
+			status: 'success',
+			data: booksOfTheBible,
+			message: 'Successfully fetched all books of the Bible',
+			statusCode: 200
+		}
+	}
+
 	async patchSermon(data, file) {
 		const sermonRecord = await this.getSermonById(data.sermon)
 		const format = "type/date/slug"
-		switch(data.updateOption) {
-			case 'image':
-				// Update imageRecord
-				const updateSermonImageResponse = await this.updateSermonFile(sermonRecord, format, file, 'Images')
-				updateSermonImageResponse.modelRecord.file_name = updateSermonImageResponse.fileName
-				updateSermonImageResponse.modelRecord.image_url = updateSermonImageResponse.url
-				await updateSermonImageResponse.modelRecord.save()
-				return updateSermonImageResponse.modelRecord
-			
-			case 'audio':
-				// Update audioRecord
-				const updateSermonAudioResponse = await this.updateSermonFile(sermonRecord, format, file, 'Audio')
-				updateSermonAudioResponse.modelRecord.file_name = updateSermonAudioResponse.fileName
-				updateSermonAudioResponse.modelRecord.audio_url = updateSermonAudioResponse.url
-				await updateSermonAudioResponse.modelRecord.save()
-				return updateSermonAudioResponse.modelRecord
-			
-			case 'video':
-				// Update videoRecord
-				const videoRecord = await this.mediaVideo.create({
-					video_url: data.video_url,
-					pastor_id: sermonRecord.pastor_id
-				})
-				sermonRecord.video_id = videoRecord.id
-				await sermonRecord.save()
-				return sermonRecord
+		if(data.bookOfTheBible) {
+			sermonRecord.book_of_the_bible_id = data.bookOfTheBible
+		}
+		if(data.sermonSeries) {
+			sermonRecord.sermon_series_id = data.sermonSeries
+		}
+		await sermonRecord.save()
+		if(data.updateOption) {
+			switch(data.updateOption) {
+				case 'image':
+					// Update imageRecord
+					const updateSermonImageResponse = await this.updateSermonFile(sermonRecord, format, file, 'Images')
+					updateSermonImageResponse.modelRecord.file_name = updateSermonImageResponse.fileName
+					updateSermonImageResponse.modelRecord.image_url = updateSermonImageResponse.url
+					await updateSermonImageResponse.modelRecord.save()
+					return updateSermonImageResponse.modelRecord
+				
+				case 'audio':
+					// Update audioRecord
+					const updateSermonAudioResponse = await this.updateSermonFile(sermonRecord, format, file, 'Audio')
+					updateSermonAudioResponse.modelRecord.file_name = updateSermonAudioResponse.fileName
+					updateSermonAudioResponse.modelRecord.audio_url = updateSermonAudioResponse.url
+					await updateSermonAudioResponse.modelRecord.save()
+					return updateSermonAudioResponse.modelRecord
+				
+				case 'video':
+					// Update videoRecord
+					const videoRecord = await this.mediaVideo.create({
+						video_url: data.video_url,
+						pastor_id: sermonRecord.pastor_id
+					})
+					sermonRecord.video_id = videoRecord.id
+					await sermonRecord.save()
+					return sermonRecord
+			}
 		}
 	}
 
@@ -150,4 +188,4 @@ class MediaService {
 	}
 }
 
-module.exports = MediaService
+module.exports = SermonService

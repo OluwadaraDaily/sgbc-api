@@ -1,97 +1,59 @@
 'use strict'
+
 const BaseController = use('App/Controllers/Http/BaseController');
+const SermonService = use('App/Services/SermonService');
 
-/** @typedef {import('@adonisjs/framework/src/Request')} Request */
-/** @typedef {import('@adonisjs/framework/src/Response')} Response */
-/** @typedef {import('@adonisjs/framework/src/View')} View */
 
-/**
- * Resourceful controller for interacting with sermons
- */
 class SermonController extends BaseController {
   constructor() {
     super();
-  }
-  /**
-   * Show a list of all sermons.
-   * GET sermons
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   * @param {View} ctx.view
-   */
-  async index ({ request, response, view }) {
+		this.sermonService = new SermonService()
   }
 
-  /**
-   * Render a form to be used for creating a new sermon.
-   * GET sermons/create
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   * @param {View} ctx.view
-   */
-  async create ({ request, response, view }) {
-  }
+	async getAllSermons({ request, response }) {
+		const { filter_by_speaker, filter_by_series, filter_by_book } = request.get()
+		try {
+			const { data, statusCode, message, status } = await this.sermonService.getAllSermons({ filter_by_speaker, filter_by_series, filter_by_book })
+			return this.success(response, data, message, statusCode)
+		} catch (error) {
+      return this.error(response, 'There was a problem, please try again later.', [], 500);
+		}
+	}
+	async getAllAudioSermons({ request, response }) {
+		try {
+			const allAudioFiles = await this.sermonService.getAllAudioSermons()
+      return this.success(response, allAudioFiles, "Successfully retrieved all audio files", 200)
+		} catch (error) {
+      return this.error(response, 'There was a problem, please try again later.', [], 500);
+		}
 
-  /**
-   * Create/save a new sermon.
-   * POST sermons
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   */
-  async store ({ request, response }) {
-  }
+	}
 
-  /**
-   * Display a single sermon.
-   * GET sermons/:id
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   * @param {View} ctx.view
-   */
-  async show ({ params, request, response, view }) {
-  }
+	async listOfAllSermons({ view }) {
+		const { data: sermons } = await this.sermonService.getAllSermons({})
+		return view.render('all-sermons', {
+			sermons
+		})
+	}
 
-  /**
-   * Render a form to update an existing sermon.
-   * GET sermons/:id/edit
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   * @param {View} ctx.view
-   */
-  async edit ({ params, request, response, view }) {
-  }
+	async getAllBooksOfTheBible({ request, response }) {
+		try {
+			const { data, statusCode, message, status } = await this.sermonService.getAllBooksOfTheBible()
+			return this.success(response, data, message, statusCode)
+		} catch (error) {
+      return this.error(response, 'There was a problem, please try again later.', [], 500);
+		}
+	}
 
-  /**
-   * Update sermon details.
-   * PUT or PATCH sermons/:id
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   */
-  async update ({ params, request, response }) {
-  }
-
-  /**
-   * Delete a sermon with id.
-   * DELETE sermons/:id
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   */
-  async destroy ({ params, request, response }) {
-  }
+	async updateSermon({ request, params, response }) {
+		const reqData = request.post()
+		try {
+			const { data, statusCode, message, status } = await this.sermonService.updateSermon(params.id, reqData)
+			return this.success(response, data, message, statusCode)
+		} catch (error) {
+      return this.error(response, 'There was a problem, please try again later.', [], 500);
+		}
+	}
 }
 
 module.exports = SermonController

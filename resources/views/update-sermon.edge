@@ -43,15 +43,24 @@
 						<option value="audio">Audio</option>
 						<option value="video">Video</option>
 						<option value="image">Image</option>
+						<option value="">None</option>
 					</select>
 				</div>
 				<div class="column is-full">
 					<label for="">File</label> <br>
 					<input type="file" name="file" accept="*">
 				</div>
-				<div>
+				<div class="column is-full">
 					<label for="">Video URL</label> <br>
 					<input type="text" name="video_url" class="input" id="">
+				</div> <br>
+				<div class="column is-full">
+					<label for="">Book of the Bible</label> <br>
+					<select name="bookOfTheBible" class="input" id="">
+						@each(book in books)
+							<option value="{{book.id}}">{{book.name}}</option>
+						@endeach
+					</select>
 				</div> <br>
 				<div>
 					<input type="submit" class="button" value="Submit">
